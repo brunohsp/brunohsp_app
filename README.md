@@ -1,16 +1,21 @@
 # brunohsp_app
 
-A new Flutter project.
+Aplicativo baseado no sistema de RPG de mesa D&D, como um trabalho para a disciplina de Desenvolvimento de Aplicações Mobile da Graduação de Bacharelado em Ciência da Computação (UTFPR).
+Desenvolvido por: Bruno Henrique Silva Pereira
 
-## Getting Started
+## Funcionalidades
 
-This project is a starting point for a Flutter application.
+* Manter Fichas de personagens do D&D
+* Lançamento de dados (D4, D6, D8, D10, D12, D20)
+* Manter Notas de jogador
+* Cadastro de usuário
 
-A few resources to get you started if this is your first Flutter project:
+## Pacotes Externos
+* flutter_svg - https://pub.dev/packages/flutter_svg
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Funcionalidades Faltantes
+* Integração com API do livro de regras do D&D para consumir dados e automatizar alguns processos de cadastro
+* Funcionalidades dependentes de um banco de dados
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Débitos Técnicos
+* Não estão sendo carregadas as informações das perícias de um personagem
