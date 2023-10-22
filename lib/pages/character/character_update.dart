@@ -12,6 +12,7 @@ const List<String> list = <String>['Guerreiro', 'Bruxo', 'Paladino'];
 class CharacterUpdate extends StatefulWidget {
   final Character character;
   final nameController = TextEditingController();
+  final classController = TextEditingController();
   final levelController = TextEditingController();
   final hpController = TextEditingController();
   final armorController = TextEditingController();
@@ -23,8 +24,8 @@ class CharacterUpdate extends StatefulWidget {
     levelController.text = character.level.toString();
     hpController.text = character.hp.toString();
     armorController.text = character.armor.toString();
-    proeficiencyController.text = character.proeficiency.toString();
-    dropdownValue = character.playerClass;
+    proeficiencyController.text = character.proficiency.toString();
+    dropdownValue = character.dndClass.name;
   }
 
   @override
@@ -92,9 +93,9 @@ class _CharacterUpdateState extends State<CharacterUpdate> {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: ClassesDropdown(columns: 4),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: ClassesDropdown(columns: 4, controller: widget.classController,),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),

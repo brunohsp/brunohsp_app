@@ -1,10 +1,11 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
 import 'package:brunohsp_app/pages/character/new_resistance_register.dart';
+import 'package:brunohsp_app/repositories/character_form_repository.dart';
 import 'package:brunohsp_app/widgets/utils/classes_dropdown.dart';
+import 'package:brunohsp_app/widgets/utils/number_picker.dart';
 import 'package:flutter/material.dart';
-
-const List<String> list = <String>['Guerreiro', 'Bruxo', 'Paladino'];
+import 'package:provider/provider.dart';
 
 class NewCharacterRegister extends StatefulWidget {
   const NewCharacterRegister({Key? key}) : super(key: key);
@@ -17,12 +18,13 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
   final _formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
+  final classController = TextEditingController();
   final levelController = TextEditingController();
   final hpController = TextEditingController();
   final armorController = TextEditingController();
-  final proeficiencyController = TextEditingController();
+  final proficiencyController = TextEditingController();
 
-  String dropdownValue = list.first;
+  late CharacterFormRepository repository = CharacterFormRepository();
 
   wrapButtons() {
     return Padding(
@@ -31,12 +33,18 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
         width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
         child: OutlinedButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+            if (_formKey.currentState!.validate() && classController.text != "") {
+              repository.savingBySteps(1, {
+                "name": nameController,
+                "hp": hpController,
+                "armor": armorController,
+              });
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NewResistanceRegister(),
-                ),
+                    builder: (context) => ChangeNotifierProvider(
+                        create: (context) => repository,
+                        child: const NewResistanceRegister())),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -73,6 +81,7 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
               }
               return null;
             },
+            keyboardType: TextInputType.name,
             controller: nameController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -80,84 +89,61 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: ClassesDropdown(columns: 4),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child:
+              ClassesDropdown(columns: 4, controller: classController), // aqui
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            validator: (String? input) {
-              if (TextFormFieldValidations.isEmpty(input)) {
-                return 'Campo Vazio';
-              }
-              return TextFormFieldValidations.containsCharacters(input!)
-                  ? "Campo deve conter apenas números"
-                  : null;
-            },
-            controller: levelController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+          child: NumberPicker.withAction(
+              enabled: repository.isClassSelected,
+              controller: levelController,
               labelText: 'Nível',
-            ),
-          ),
+              min: 1,
+              max: 20,
+              pickerValue: repository.newCharacter.level,
+              action: (int value) {
+                proficiencyController.text = repository
+                    .newCharacter.dndClass.profBonusesBylevel[value]!
+                    .toString();
+
+                repository.changeLevel(value);
+              }),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            validator: (String? input) {
-              if (TextFormFieldValidations.isEmpty(input)) {
-                return 'Campo Vazio';
-              }
-              return TextFormFieldValidations.containsCharacters(input!)
-                  ? "Campo deve conter apenas números"
-                  : null;
-            },
+          child: NumberPicker.withAction(
+            enabled: repository.isClassSelected,
             controller: hpController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'HP',
-            ),
+            labelText: 'HP',
+            pickerValue: repository.newCharacter.hp,
+            min: 1,
+            max: 1000,
+            action: (int value) {
+              repository.changeHp(value);
+            },
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            validator: (String? input) {
-              if (TextFormFieldValidations.isEmpty(input)) {
-                return 'Campo Vazio';
-              }
-              return TextFormFieldValidations.containsCharacters(input!)
-                  ? "Campo deve conter apenas números"
-                  : null;
-            },
+          child: NumberPicker.withAction(
+            enabled: repository.isClassSelected,
             controller: armorController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Armadura',
-            ),
+            labelText: 'Armadura',
+            pickerValue: repository.newCharacter.armor,
+            action: (int value) {
+              repository.changeArmor(value);
+            },
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            validator: (String? input) {
-              if (TextFormFieldValidations.isEmpty(input)) {
-                return 'Campo Vazio';
-              }
-              return TextFormFieldValidations.containsCharacters(input!)
-                  ? "Campo deve conter apenas números"
-                  : null;
-            },
-            controller: proeficiencyController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Proeficiência',
-            ),
+          child: NumberPicker.withValue(
+            enabled: false,
+            controller: proficiencyController,
+            labelText: 'Proeficiência',
+            pickerValue: repository.newCharacter.proficiency,
           ),
         ),
       ],
@@ -184,6 +170,8 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
 
   @override
   Widget build(BuildContext context) {
+    repository = context.watch<CharacterFormRepository>();
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -192,8 +180,7 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
           centerTitle: true,
           title: const Text(
             'Cadastro de Personagem',
-            style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         body: wrapBody(),

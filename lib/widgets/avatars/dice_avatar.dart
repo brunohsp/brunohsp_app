@@ -47,16 +47,23 @@ class _DiceAvatarState extends State<DiceAvatar> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: NumberPicker(
-                      controller: widget.diceController, max: 10, min: 1),
+                    labelText: "lançamentos",
+                    controller: widget.diceController,
+                    max: 10,
+                    min: 1,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
+                      width: Calculate.widthWithColumns(
+                          2, MediaQuery.of(context).size.width),
                       child: FilledButton(
                         onPressed: () {
-                          widget.results = DiceAvatarController.throwDices(widget.diceController.text, widget.sides);
+                          // TODO: CHANGE RESULTS VISUALISATION
+                          widget.results = DiceAvatarController.throwDices(
+                              widget.diceController.text, widget.sides);
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -66,10 +73,10 @@ class _DiceAvatarState extends State<DiceAvatar> {
                               ),
                               duration: const Duration(milliseconds: 3000),
                               padding: const EdgeInsets.symmetric(
-                                horizontal:
-                                    8.0,
-                                    vertical: 8.0// Inner padding for SnackBar content.
-                              ),
+                                  horizontal: 8.0,
+                                  vertical:
+                                      8.0 // Inner padding for SnackBar content.
+                                  ),
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -81,7 +88,8 @@ class _DiceAvatarState extends State<DiceAvatar> {
                       ),
                     ),
                     SizedBox(
-                      width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
+                      width: Calculate.widthWithColumns(
+                          2, MediaQuery.of(context).size.width),
                       child: OutlinedButton(
                         child: const Text('Cancelar'),
                         onPressed: () => Navigator.pop(context),

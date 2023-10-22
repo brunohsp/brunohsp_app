@@ -33,12 +33,11 @@ dependencies:
     sdk: flutter
 
   flutter_svg: ^2.0.5
-
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  http: ^0.13.6
+  logger: ^2.0.2+1
+  http_interceptor: ^1.0.2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
@@ -73,16 +72,16 @@ flutter:
     - assets/icons/bottomBarIcons/book.svg
     - assets/icons/bottomBarIcons/chart.svg
     - assets/icons/bottomBarIcons/dice.svg
-    - assets/icons/skillIcons/acrobacy.svg
-    - assets/icons/skillIcons/actuation.svg
-    - assets/icons/skillIcons/arcanism.svg
-    - assets/icons/skillIcons/athletism.svg
-    - assets/icons/skillIcons/bluff.svg
-    - assets/icons/skillIcons/handle_with_animals.svg
+    - assets/icons/skillIcons/acrobatics.svg
+    - assets/icons/skillIcons/performance.svg
+    - assets/icons/skillIcons/arcana.svg
+    - assets/icons/skillIcons/athletics.svg
+    - assets/icons/skillIcons/deception.svg
+    - assets/icons/skillIcons/animal_handling.svg
     - assets/icons/skillIcons/history.svg
-    - assets/icons/skillIcons/ilusion.svg
+    - assets/icons/skillIcons/sleight_of_hand.svg
     - assets/icons/skillIcons/intimidation.svg
-    - assets/icons/skillIcons/intuition.svg
+    - assets/icons/skillIcons/insight.svg
     - assets/icons/skillIcons/investigation.svg
     - assets/icons/skillIcons/medicine.svg
     - assets/icons/skillIcons/nature.svg

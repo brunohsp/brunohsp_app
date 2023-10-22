@@ -3,6 +3,7 @@ import 'package:brunohsp_app/widgets/cards/default_card.dart';
 import 'package:flutter/material.dart';
 
 class DiaryCard extends DefaultCard {
+  // TODO: RECEIVE A NOTE/DIARY MODEL
   final String sectionName;
   final String content;
   final DateTime date;

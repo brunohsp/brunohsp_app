@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 const List<String> list = <String>['Guerreiro', 'Bruxo', 'Paladino'];
 
 class NewNoteRegister extends StatefulWidget {
+  // TODO: KILL THIS SHIT
   const NewNoteRegister({Key? key}) : super(key: key);
 
   @override
