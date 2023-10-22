@@ -3,24 +3,13 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/models/resistance.dart';
 import 'package:brunohsp_app/pages/character/new_skill_register.dart';
+import 'package:brunohsp_app/repositories/character_form_repository.dart';
 import 'package:brunohsp_app/widgets/utils/skill_input.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewResistanceRegister extends StatefulWidget {
-  late Resistance attributes;
-  final TextEditingController strengthController =
-      TextEditingController(text: '0');
-  final TextEditingController inteligencyController =
-      TextEditingController(text: '0');
-  final TextEditingController dexterityController =
-      TextEditingController(text: '0');
-  final TextEditingController wisdomController =
-      TextEditingController(text: '0');
-  final TextEditingController constitutionController =
-      TextEditingController(text: '0');
-  final TextEditingController charismController =
-      TextEditingController(text: '0');
-  NewResistanceRegister({Key? key}) : super(key: key);
+  const NewResistanceRegister({Key? key}) : super(key: key);
 
   @override
   State<NewResistanceRegister> createState() => _NewResistanceRegisterState();
@@ -28,6 +17,15 @@ class NewResistanceRegister extends StatefulWidget {
 
 class _NewResistanceRegisterState extends State<NewResistanceRegister> {
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController strengthController = TextEditingController();
+  final TextEditingController intelligencyController = TextEditingController();
+  final TextEditingController dexterityController = TextEditingController();
+  final TextEditingController wisdomController = TextEditingController();
+  final TextEditingController constitutionController = TextEditingController();
+  final TextEditingController charismController = TextEditingController();
+
+  late CharacterFormRepository repository;
 
   wrapButtons() {
     return Padding(
@@ -37,27 +35,30 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
         child: OutlinedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              widget.attributes = Resistance(
-                int.parse(widget.strengthController.text),
-                int.parse(widget.inteligencyController.text),
-                int.parse(widget.dexterityController.text),
-                int.parse(widget.wisdomController.text),
-                int.parse(widget.constitutionController.text),
-                int.parse(widget.charismController.text),
-              );
+              repository.savingBySteps(2, {
+                "strength": strengthController,
+                "inteligency": intelligencyController,
+                "dexterity": dexterityController,
+                "wisdom": wisdomController,
+                "constitution": constitutionController,
+                "charism": charismController,
+              });
 
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NewSkillRegister(
-                    attributes: widget.attributes,
+                  builder: (context) => ChangeNotifierProvider(
+                    create: (context) => repository,
+                    lazy: false,
+                    child: const NewSkillRegister(),
                   ),
                 ),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Ops, algo deu errado, verifique os Campos acima'),
+                  content:
+                      Text('Ops, algo deu errado, verifique os Campos acima'),
                 ),
               );
             }
@@ -69,44 +70,53 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
   }
 
   wrapInputs() {
+    List<Resistances> savingThrows =
+        repository.newCharacter.dndClass.savingThrows;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/strength.svg',
           skill: 'Força',
-          value: 0,
-          controller: widget.strengthController,
+          controller: strengthController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.strength),
         ),
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/intelligency.svg',
           skill: 'Inteligência',
-          value: 0,
-          controller: widget.inteligencyController,
+          controller: intelligencyController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.intelligency),
         ),
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/dexterity.svg',
           skill: 'Destreza',
-          value: 0,
-          controller: widget.dexterityController,
+          controller: dexterityController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.dexterity),
         ),
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/wisdom.svg',
           skill: 'Sabedoria',
-          value: 0,
-          controller: widget.wisdomController,
+          controller: wisdomController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.wisdom),
         ),
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/constitution.svg',
           skill: 'Constituição',
-          value: 0,
-          controller: widget.constitutionController,
+          controller: constitutionController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.constitution),
         ),
-        SkillInput(
+        SkillInput.withoutValue(
           url: 'assets/icons/resistanceIcons/charism.svg',
           skill: 'Carisma',
-          value: 0,
-          controller: widget.charismController,
+          controller: charismController,
+          proficiencyBonus: repository.newCharacter.proficiency,
+          hasExpertise: savingThrows.contains(Resistances.charism),
         ),
       ],
     );
@@ -132,6 +142,8 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
 
   @override
   Widget build(BuildContext context) {
+    repository = Provider.of<CharacterFormRepository>(context);
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -140,8 +152,7 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
           centerTitle: true,
           title: const Text(
             'Cadastro de Personagem',
-            style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         body: wrapBody(),

@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 class SkillUpdate extends StatefulWidget {
   final Resistance attributes;
   late Skill skills;
-  final acrobacyController = TextEditingController();
-  final arcanismController = TextEditingController();
-  final athletismController = TextEditingController();
-  final actuationController = TextEditingController();
-  final bluffController = TextEditingController();
+  final acrobaticsController = TextEditingController();
+  final arcanaController = TextEditingController();
+  final athleticsController = TextEditingController();
+  final performanceController = TextEditingController();
+  final deceptionController = TextEditingController();
   final stealthController = TextEditingController();
   final historyController = TextEditingController();
   final intimidationController = TextEditingController();
@@ -29,23 +29,23 @@ class SkillUpdate extends StatefulWidget {
   final survivalController = TextEditingController();
 
   SkillUpdate({required this.attributes, Key? key}) : super(key: key) {
-    skills = Skill(resistance: attributes);
-    acrobacyController.text = skills.acrobacy.toString();
-    arcanismController.text = skills.arcanism.toString();
-    athletismController.text = skills.athletism.toString();
-    actuationController.text = skills.actuation.toString();
-    bluffController.text = skills.bluff.toString();
+    skills = Skill(resistance: attributes, proficiencies: []);
+    acrobaticsController.text = skills.acrobatics.toString();
+    arcanaController.text = skills.arcana.toString();
+    athleticsController.text = skills.athletics.toString();
+    performanceController.text = skills.performance.toString();
+    deceptionController.text = skills.deception.toString();
     stealthController.text = skills.stealth.toString();
     historyController.text = skills.history.toString();
     intimidationController.text = skills.intimidation.toString();
-    intuitionController.text = skills.intuition.toString();
+    intuitionController.text = skills.insight.toString();
     investigationController.text = skills.investigation.toString();
-    handleWithAnimalsController.text = skills.handleWithAnimals.toString();
+    handleWithAnimalsController.text = skills.animalHandling.toString();
     medicineController.text = skills.medicine.toString();
     natureController.text = skills.nature.toString();
     perceptionController.text = skills.perception.toString();
     persuationController.text = skills.persuation.toString();
-    ilusionController.text = skills.ilusion.toString();
+    ilusionController.text = skills.sleightOfHand.toString();
     religionController.text = skills.religion.toString();
     survivalController.text = skills.survival.toString();
   }
@@ -86,112 +86,148 @@ class _SkillUpdateState extends State<SkillUpdate> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SkillInput(
-          url: 'assets/icons/skillIcons/acrobacy.svg',
+          url: 'assets/icons/skillIcons/acrobatics.svg',
           skill: 'Acrobacia',
-          value: widget.skills.acrobacy,
-          controller: widget.acrobacyController,
+          value: widget.skills.acrobatics,
+          controller: widget.acrobaticsController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/arcanism.svg',
-          skill: 'Arcanismo',
-          value: widget.skills.arcanism,
-          controller: widget.arcanismController,
+          url: 'assets/icons/skillIcons/arcana.svg',
+          skill: 'arcanao',
+          value: widget.skills.arcana,
+          controller: widget.arcanaController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/athletism.svg',
+          url: 'assets/icons/skillIcons/athletics.svg',
           skill: 'Atletismo',
-          value: widget.skills.athletism,
-          controller: widget.athletismController,
+          value: widget.skills.athletics,
+          controller: widget.athleticsController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/actuation.svg',
+          url: 'assets/icons/skillIcons/performance.svg',
           skill: 'Atuação',
-          value: widget.skills.actuation,
-          controller: widget.actuationController,
+          value: widget.skills.performance,
+          controller: widget.performanceController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/bluff.svg',
+          url: 'assets/icons/skillIcons/deception.svg',
           skill: 'Blefe',
-          value: widget.skills.bluff,
-          controller: widget.bluffController,
+          value: widget.skills.deception,
+          controller: widget.deceptionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/stealth.svg',
           skill: 'Furtividade',
           value: widget.skills.stealth,
           controller: widget.stealthController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/history.svg',
           skill: 'História',
           value: widget.skills.history,
           controller: widget.historyController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/intimidation.svg',
           skill: 'Indimidação',
           value: widget.skills.intimidation,
           controller: widget.intimidationController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/intuition.svg',
+          url: 'assets/icons/skillIcons/insight.svg',
           skill: 'Intuição',
-          value: widget.skills.intuition,
+          value: widget.skills.insight,
           controller: widget.intuitionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/investigation.svg',
           skill: 'Investigação',
           value: widget.skills.investigation,
           controller: widget.investigationController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/handle_with_animals.svg',
+          url: 'assets/icons/skillIcons/animal_handling.svg',
           skill: 'Lidar com Animais',
-          value: widget.skills.handleWithAnimals,
+          value: widget.skills.animalHandling,
           controller: widget.handleWithAnimalsController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/medicine.svg',
           skill: 'Medicina',
           value: widget.skills.medicine,
           controller: widget.medicineController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/nature.svg',
           skill: 'Natureza',
           value: widget.skills.nature,
           controller: widget.natureController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/perception.svg',
           skill: 'Percepção',
           value: widget.skills.perception,
           controller: widget.perceptionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/persuation.svg',
           skill: 'Persuasão',
           value: widget.skills.persuation,
           controller: widget.persuationController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
-          url: 'assets/icons/skillIcons/ilusion.svg',
+          url: 'assets/icons/skillIcons/sleight_of_hand.svg',
           skill: 'Ilusão',
-          value: widget.skills.ilusion,
+          value: widget.skills.sleightOfHand,
           controller: widget.ilusionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/religion.svg',
           skill: 'Religião',
           value: widget.skills.religion,
           controller: widget.religionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/skillIcons/survival.svg',
           skill: 'Sobrevivência',
           value: widget.skills.survival,
           controller: widget.survivalController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
       ],
     );

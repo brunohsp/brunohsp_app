@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 const List<String> list = <String>['Guerreiro', 'Bruxo', 'Paladino'];
 
 class NoteUpdate extends StatefulWidget {
+  // TODO: RECEIVE A NOTE/DIARY MODEL
+  // TODO: IMPLEMENTS DATABASE
+
+
   final String title;
   final DateTime date;
   final String note;

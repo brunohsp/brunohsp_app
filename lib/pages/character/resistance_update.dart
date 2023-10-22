@@ -39,12 +39,12 @@ class _ResistanceUpdateState extends State<ResistanceUpdate> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               widget.attributes = Resistance(
-                int.parse(widget.strengthController.text),
-                int.parse(widget.inteligencyController.text),
-                int.parse(widget.dexterityController.text),
-                int.parse(widget.wisdomController.text),
-                int.parse(widget.constitutionController.text),
-                int.parse(widget.charismController.text),
+                strength: int.parse(widget.strengthController.text),
+                inteligency: int.parse(widget.inteligencyController.text),
+                dexterity: int.parse(widget.dexterityController.text),
+                wisdom: int.parse(widget.wisdomController.text),
+                constitution: int.parse(widget.constitutionController.text),
+                charism: int.parse(widget.charismController.text),
               );
 
               Navigator.push(
@@ -79,36 +79,48 @@ class _ResistanceUpdateState extends State<ResistanceUpdate> {
           skill: 'Força',
           value: 0,
           controller: widget.strengthController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/resistanceIcons/intelligency.svg',
           skill: 'Inteligência',
           value: 0,
           controller: widget.inteligencyController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/resistanceIcons/dexterity.svg',
           skill: 'Destreza',
           value: 0,
           controller: widget.dexterityController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/resistanceIcons/wisdom.svg',
           skill: 'Sabedoria',
           value: 0,
           controller: widget.wisdomController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/resistanceIcons/constitution.svg',
           skill: 'Constituição',
           value: 0,
           controller: widget.constitutionController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
         SkillInput(
           url: 'assets/icons/resistanceIcons/charism.svg',
           skill: 'Carisma',
           value: 0,
           controller: widget.charismController,
+          proficiencyBonus: 0, //repository.newCharacter.proficiency,
+          hasExpertise: false,//repository.newCharacter.dndClass.savingThrows.contains(Resistances.strength),
         ),
       ],
     );

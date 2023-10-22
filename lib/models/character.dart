@@ -1,33 +1,40 @@
+import 'package:brunohsp_app/models/dnd_class.dart';
 import 'package:brunohsp_app/models/resistance.dart';
 import 'package:brunohsp_app/models/skill.dart';
 
 class Character {
-  final String name;
-  final String playerClass;
-  final int level;
-  final int hp;
-  final int armor;
-  final int proeficiency;
+  late String name;
+  late int level;
+  late int hp;
+  late int armor;
+  late int proficiency;
+  late DndClass dndClass;
   late Resistance resistances;
   late Skill skills;
 
   Character({
     required this.name,
-    required this.playerClass,
     required this.level,
     required this.hp,
     required this.armor,
-    required this.proeficiency,
+    required this.proficiency,
   });
 
-   Character.withResistancesAndSkills({
+  Character.withResistancesAndSkills({
     required this.name,
-    required this.playerClass,
+    required this.dndClass,
     required this.level,
     required this.hp,
     required this.armor,
-    required this.proeficiency,
+    required this.proficiency,
     required this.resistances,
     required this.skills,
   });
+
+  Character.emptyInstance(){
+    proficiency = 0;
+    level = 1;
+    hp = 1;
+    armor = 0;
+  }
 }

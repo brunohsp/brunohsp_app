@@ -11,7 +11,7 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  wrapSheets() {
+  wrapSheets() { // TODO: INSERT DATABASE
     return Section(
       title: 'Fichas',
       child: SizedBox(
@@ -52,7 +52,7 @@ class _MainMenuState extends State<MainMenu> {
 
 
 
-  wrapDices() {
+  wrapDices() { // TODO: INSERT DATABASE
     return Section(
       title: 'Dados Rolados Recentemente',
       child: SizedBox(

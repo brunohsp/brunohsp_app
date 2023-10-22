@@ -13,7 +13,7 @@ class GameplayMenu extends StatefulWidget {
 }
 
 class _GameplayMenuState extends State<GameplayMenu> {
-  wrapDices() {
+  wrapDices() { // TODO: CHANGE WHERE THE DICES AR CODED - INHERITED_WIDGET
     return Section(
       title: 'Dados',
       child: SizedBox(
@@ -58,7 +58,7 @@ class _GameplayMenuState extends State<GameplayMenu> {
     );
   }
 
-  wrapDiaries() {
+  wrapDiaries() { // TODO: INSERT DATABASE
     return Section(
       title: 'Diário do Jogador',
       child: SizedBox(

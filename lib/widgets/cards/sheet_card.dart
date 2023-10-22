@@ -60,7 +60,7 @@ class _SheetCardChildren extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    character.playerClass,
+                    character.dndClass.name,
                     style: const TextStyle(fontSize: 12),
                   ),
                   Text('nvl. ${character.level}'),
@@ -97,7 +97,7 @@ class _SheetCardChildren extends StatelessWidget {
               Icons.star_rounded,
               size: 18,
             ),
-            label: character.proeficiency.toString(),
+            label: character.proficiency.toString(),
           )
         ],
       ),
@@ -221,28 +221,28 @@ class _SheetCardChildren extends StatelessWidget {
                       children: [
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/acrobacy.svg'),
-                          label: character.skills.acrobacy.toString(),
+                              'assets/icons/skillIcons/acrobatics.svg'),
+                          label: character.skills.acrobatics.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/arcanism.svg'),
-                          label: character.skills.arcanism.toString(),
+                              'assets/icons/skillIcons/arcana.svg'),
+                          label: character.skills.arcana.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/athletism.svg'),
-                          label: character.skills.athletism.toString(),
+                              'assets/icons/skillIcons/athletics.svg'),
+                          label: character.skills.athletics.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/actuation.svg'),
-                          label: character.skills.actuation.toString(),
+                              'assets/icons/skillIcons/performance.svg'),
+                          label: character.skills.performance.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/bluff.svg'),
-                          label: character.skills.bluff.toString(),
+                              'assets/icons/skillIcons/deception.svg'),
+                          label: character.skills.deception.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
@@ -266,8 +266,8 @@ class _SheetCardChildren extends StatelessWidget {
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/intuition.svg'),
-                          label: character.skills.intuition.toString(),
+                              'assets/icons/skillIcons/insight.svg'),
+                          label: character.skills.insight.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
@@ -276,8 +276,8 @@ class _SheetCardChildren extends StatelessWidget {
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/handle_with_animals.svg'),
-                          label: character.skills.handleWithAnimals.toString(),
+                              'assets/icons/skillIcons/animal_handling.svg'),
+                          label: character.skills.animalHandling.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
@@ -306,8 +306,8 @@ class _SheetCardChildren extends StatelessWidget {
                         ),
                         Tag(
                           badge: SvgPicture.asset(
-                              'assets/icons/skillIcons/ilusion.svg'),
-                          label: character.skills.ilusion.toString(),
+                              'assets/icons/skillIcons/sleight_of_hand.svg'),
+                          label: character.skills.sleightOfHand.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
