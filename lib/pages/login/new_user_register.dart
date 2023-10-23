@@ -2,7 +2,9 @@
 
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewUserRegister extends StatefulWidget {
   const NewUserRegister({Key? key}) : super(key: key);
@@ -14,8 +16,29 @@ class NewUserRegister extends StatefulWidget {
 class _NewUserRegisterState extends State<NewUserRegister> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  final nameController = TextEditingController();
   final passwordController = TextEditingController();
+
+  createAccount() async {
+    try {
+      await context
+          .read<AuthService>()
+          .create(emailController.text, passwordController.text);
+    } on AuthException catch (err) {
+      onError(err.message);
+    }
+  }
+
+  onError(String err) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(err),
+      ),
+    );
+  }
+
+  goBack() {
+    Navigator.pop(context);
+  }
 
   wrapButtons() {
     return Padding(
@@ -23,9 +46,10 @@ class _NewUserRegisterState extends State<NewUserRegister> {
       child: SizedBox(
         width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
         child: OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              Navigator.pop(context);
+              await createAccount();
+              goBack();
             }
           },
           child: const Text('Cadastrar'),
@@ -37,21 +61,6 @@ class _NewUserRegisterState extends State<NewUserRegister> {
   wrapInputs() {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            validator: (String? input) {
-              if (TextFormFieldValidations.isEmpty(input))
-                return "Campo está vazio!";
-              return null;
-            },
-            controller: nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nome',
-            ),
-          ),
-        ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: TextFormField(

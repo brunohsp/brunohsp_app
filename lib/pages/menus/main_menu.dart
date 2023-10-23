@@ -1,7 +1,9 @@
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/cards/mini_rolled_dice_card.dart';
 import 'package:brunohsp_app/widgets/cards/mini_sheet_card.dart';
 import 'package:brunohsp_app/widgets/utils/section.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -11,7 +13,8 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  wrapSheets() { // TODO: INSERT DATABASE
+  wrapSheets() {
+    // TODO: INSERT DATABASE
     return Section(
       title: 'Fichas',
       child: SizedBox(
@@ -50,9 +53,8 @@ class _MainMenuState extends State<MainMenu> {
     );
   }
 
-
-
-  wrapDices() { // TODO: INSERT DATABASE
+  wrapDices() {
+    // TODO: INSERT DATABASE
     return Section(
       title: 'Dados Rolados Recentemente',
       child: SizedBox(
@@ -100,7 +102,30 @@ class _MainMenuState extends State<MainMenu> {
       ),
       body: ListView(
         scrollDirection: Axis.vertical,
-        children: [wrapSheets(), wrapDices()],
+        children: [
+          wrapSheets(),
+          wrapDices(),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: OutlinedButton(
+                onPressed: () => context.read<AuthService>().logout(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Sair do app',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    )
+                  ],
+                )),
+          ),
+        ],
       ),
     );
   }
