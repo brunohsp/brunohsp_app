@@ -53,7 +53,8 @@ class NotesRepository extends ChangeNotifier {
 
     await db
         .collection('users/${auth.user!.uid}/notes')
-        .doc('${newNote.date}_${newNote.sectionName}')
+        .doc(
+            '${newNote.date.day}-${newNote.date.month}-${newNote.date.year}::${newNote.date.hour}::${newNote.date.minute}::${newNote.date.second}_${newNote.sectionName}')
         .set({
       'section_name': newNote.sectionName,
       'content': newNote.content,
@@ -65,7 +66,7 @@ class NotesRepository extends ChangeNotifier {
   remove(Note note) async {
     await db
         .collection('users/${auth.user!.uid}/notes')
-        .doc('${note.date}_${note.sectionName}')
+        .doc('${note.date.day}-${note.date.month}-${note.date.year}::${note.date.hour}::${note.date.minute}::${note.date.second}_${note.sectionName}')
         .delete();
     _list.remove(note);
     notifyListeners();
