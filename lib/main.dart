@@ -1,3 +1,4 @@
+import 'package:brunohsp_app/repositories/notes_repository.dart';
 import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/auth_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,10 +20,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthService())
+        ChangeNotifierProvider(create: (context) => AuthService()),
+        ChangeNotifierProvider(
+          create: (context) => NotesRepository(
+            auth: context.read<AuthService>(),
+          ),
+        ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'DND',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
           useMaterial3: true,

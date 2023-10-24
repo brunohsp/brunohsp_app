@@ -1,37 +1,72 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
+import 'package:brunohsp_app/models/note.dart';
+import 'package:brunohsp_app/repositories/notes_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-const List<String> list = <String>['Guerreiro', 'Bruxo', 'Paladino'];
-
-class NoteUpdate extends StatefulWidget {
-  // TODO: RECEIVE A NOTE/DIARY MODEL
-  // TODO: IMPLEMENTS DATABASE
-
-
-  final String title;
-  final DateTime date;
-  final String note;
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController noteController = TextEditingController();
-  NoteUpdate({
-    required this.title,
-    required this.date,
-    required this.note,
-    Key? key,
-  }) : super(key: key) {
-    titleController.text = title;
-    noteController.text = note;
-  }
+class NoteForm extends StatefulWidget {
+  final bool isCreate;
+  final Note? selectedNote;
+  const NoteForm({required this.isCreate, this.selectedNote, Key? key})
+      : super(key: key);
 
   @override
-  State<NoteUpdate> createState() => _NoteUpdateState();
+  State<NoteForm> createState() => _NoteFormState();
 }
 
-class _NoteUpdateState extends State<NoteUpdate> {
+//TODO: add snackbar with errors and response
+
+class _NoteFormState extends State<NoteForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String dropdownValue = list.first;
+  final titleController = TextEditingController();
+  final noteController = TextEditingController();
+  late NotesRepository repository;
+
+  late String actionButton;
+  late String pageTitle;
+
+  @override
+  void initState() {
+    super.initState();
+    setFormType();
+
+    if(widget.selectedNote != null){
+      titleController.text = widget.selectedNote!.sectionName;
+        noteController.text = widget.selectedNote!.content;
+    }
+  }
+
+  setFormType() {
+    setState(() {
+      if (widget.isCreate) {
+        actionButton = 'Salvar';
+        pageTitle = 'Nova Nota';
+      } else {
+        actionButton = 'Atualizar';
+        pageTitle = 'Atualizar Nota';
+      }
+    });
+  }
+
+  onAction() async {
+    Note note = Note(
+      sectionName: titleController.text,
+      content: noteController.text,
+      date: DateTime.now(),
+    );
+
+    if (!widget.isCreate && widget.selectedNote != null) {
+      await repository.remove(widget.selectedNote as Note);
+    }
+
+    await repository.saveOneNote(note);
+  }
+
+  onRemove() async {
+    return await repository.remove(widget.selectedNote as Note);
+  }
 
   confirmationModal() {
     return showModalBottomSheet<void>(
@@ -60,6 +95,7 @@ class _NoteUpdateState extends State<NoteUpdate> {
                           2, MediaQuery.of(context).size.width),
                       child: FilledButton(
                         onPressed: () {
+                          onRemove();
                           Navigator.popUntil(context, (route) => route.isFirst);
                         },
                         child: const Text('Sim'),
@@ -86,8 +122,9 @@ class _NoteUpdateState extends State<NoteUpdate> {
 
   wrapButtons() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: widget.isCreate
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
           width:
@@ -95,7 +132,8 @@ class _NoteUpdateState extends State<NoteUpdate> {
           child: FilledButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                Navigator.pop(context);
+                onAction();
+                Navigator.popUntil(context, (route) => route.isFirst);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -104,19 +142,20 @@ class _NoteUpdateState extends State<NoteUpdate> {
                 );
               }
             },
-            child: const Text('Atualizar'),
+            child: Text(actionButton),
           ),
         ),
-        SizedBox(
-          width:
-              Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
-          child: OutlinedButton(
-            onPressed: () {
-              confirmationModal();
-            },
-            child: const Text('Remover'),
+        if (!widget.isCreate)
+          SizedBox(
+            width: Calculate.widthWithColumns(
+                2, MediaQuery.of(context).size.width),
+            child: OutlinedButton(
+              onPressed: () {
+                confirmationModal();
+              },
+              child: const Text('Remover'),
+            ),
           ),
-        ),
       ],
     );
   }
@@ -135,7 +174,7 @@ class _NoteUpdateState extends State<NoteUpdate> {
               }
               return null;
             },
-            controller: widget.titleController,
+            controller: titleController,
             decoration: const InputDecoration(
               border: UnderlineInputBorder(),
               labelText: 'Título',
@@ -153,8 +192,8 @@ class _NoteUpdateState extends State<NoteUpdate> {
             },
             textAlign: TextAlign.start,
             textAlignVertical: TextAlignVertical.top,
-            controller: widget.noteController,
-            maxLines: 15,
+            controller: noteController,
+            maxLines: 20,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Nota',
@@ -166,18 +205,16 @@ class _NoteUpdateState extends State<NoteUpdate> {
   }
 
   wrapBody() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              wrapInputs(),
-              wrapButtons(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            wrapInputs(),
+            wrapButtons(),
+          ],
         ),
       ),
     );
@@ -185,15 +222,16 @@ class _NoteUpdateState extends State<NoteUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    repository = context.read<NotesRepository>();
     return Form(
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 1,
+          elevation: 10,
           centerTitle: true,
-          title: const Text(
-            'Nova Nota',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          title: Text(
+            pageTitle,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         body: wrapBody(),

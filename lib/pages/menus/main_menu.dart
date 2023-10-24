@@ -1,3 +1,4 @@
+import 'package:brunohsp_app/models/dice_roll.dart';
 import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/cards/mini_rolled_dice_card.dart';
 import 'package:brunohsp_app/widgets/cards/mini_sheet_card.dart';
@@ -65,22 +66,12 @@ class _MainMenuState extends State<MainMenu> {
           children: [
             MiniRolledDiceCard(
               columns: 3,
-              dice: 'D20',
-              results: const [10],
-            ),
-            MiniRolledDiceCard(
-              columns: 3,
-              times: 4,
-              addition: 1,
-              dice: 'D20',
-              results: const [10, 20, 3, 12],
-            ),
-            MiniRolledDiceCard(
-              columns: 3,
-              times: 2,
-              addition: 4,
-              dice: 'D20',
-              results: const [10, 3],
+              diceRoll: DiceRoll(
+                times: 2,
+                addition: 4,
+                dice: 'D20',
+                results: const [10, 3],
+              ),
             ),
           ],
         ),
@@ -90,6 +81,8 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
