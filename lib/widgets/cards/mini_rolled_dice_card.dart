@@ -8,10 +8,12 @@ class MiniRolledDiceCard extends DefaultCard {
   MiniRolledDiceCard(
       {required columns,
       required this.diceRoll,
+      onTap,
       Key? key})
       : super(
             key: key,
             columns: columns,
+            onTap: onTap,
             child: _MiniRolledDiceCardChildren(
               diceRoll: diceRoll,
             ));

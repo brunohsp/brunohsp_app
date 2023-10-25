@@ -1,7 +1,12 @@
-import 'package:brunohsp_app/models/dice_roll.dart';
+import 'package:brunohsp_app/pages/character/character_form.dart';
+import 'package:brunohsp_app/repositories/character_form_repository.dart';
+import 'package:brunohsp_app/repositories/characters_repository.dart';
+import 'package:brunohsp_app/repositories/dices_repository.dart';
 import 'package:brunohsp_app/services/auth_service.dart';
+import 'package:brunohsp_app/widgets/cards/default_card.dart';
 import 'package:brunohsp_app/widgets/cards/mini_rolled_dice_card.dart';
 import 'package:brunohsp_app/widgets/cards/mini_sheet_card.dart';
+import 'package:brunohsp_app/widgets/cards/new_item_card.dart';
 import 'package:brunohsp_app/widgets/utils/section.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,43 +19,47 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  late CharacterRepository charactersRepository;
+  late DicesRepository dicesReposository;
+
   wrapSheets() {
-    // TODO: INSERT DATABASE
     return Section(
       title: 'Fichas',
       child: SizedBox(
-        height: 160,
-        child: ListView(
-          clipBehavior: Clip.none,
-          scrollDirection: Axis.horizontal,
-          children: [
-            MiniSheetCard(
-              columns: 3,
-              name: 'João das Neves DA SILVAdasdadasdasdadsad',
-              playerClass: 'Nerd',
-              level: 13,
-              hp: 10,
-              armor: 0,
-            ),
-            MiniSheetCard(
-              columns: 3,
-              name: 'João das Neves DA SILVAdasdadasdasdadsad',
-              playerClass: 'Nerd',
-              level: 13,
-              hp: 10,
-              armor: 0,
-            ),
-            MiniSheetCard(
-              columns: 3,
-              name: 'João das Neves DA SILVAdasdadasdasdadsad',
-              playerClass: 'Nerd',
-              level: 13,
-              hp: 10,
-              armor: 0,
-            ),
-          ],
-        ),
-      ),
+          height: 160,
+          child: Consumer<CharacterRepository>(
+              builder: (context, characters, child) {
+            return characters.list.isEmpty
+                ? NewItemCard(
+                    columns: 3,
+                    itemName: 'Personagem',
+                    onTap: () {
+                      return Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangeNotifierProvider(
+                              create: (context) => CharacterFormRepository(
+                                  auth: context.read<AuthService>()),
+                              child: const CharacterForm()),
+                        ),
+                      );
+                    },
+                  )
+                : SizedBox(
+                    height: 300,
+                    child: ListView.builder(
+                      clipBehavior: Clip.none,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: characters.list.length,
+                      itemBuilder: (_, index) {
+                        return MiniSheetCard(
+                          columns: 3,
+                          character: characters.list[index],
+                        );
+                      },
+                    ),
+                  );
+          })),
     );
   }
 
@@ -60,20 +69,30 @@ class _MainMenuState extends State<MainMenu> {
       title: 'Dados Rolados Recentemente',
       child: SizedBox(
         height: 152,
-        child: ListView(
-          clipBehavior: Clip.none,
-          scrollDirection: Axis.horizontal,
-          children: [
-            MiniRolledDiceCard(
-              columns: 3,
-              diceRoll: DiceRoll(
-                times: 2,
-                addition: 4,
-                dice: 'D20',
-                results: const [10, 3],
-              ),
-            ),
-          ],
+        child: Consumer<DicesRepository>(
+          builder: (context, dices, child) {
+            return dices.list.isEmpty
+                ? DefaultCard(
+                    columns: 3,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text('Nenhum dado foi jogado ainda...'),
+                    ),
+                  )
+                : ListView.builder(
+                    clipBehavior: Clip.none,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: dices.list.length,
+                    itemBuilder: (_, index) {
+                      return MiniRolledDiceCard(
+                        onTap: () async =>
+                            await dicesReposository.remove(dices.list[index]),
+                        columns: 3,
+                        diceRoll: dices.list[index],
+                      );
+                    },
+                  );
+          },
         ),
       ),
     );
@@ -81,7 +100,8 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   Widget build(BuildContext context) {
-
+    charactersRepository = context.watch<CharacterRepository>();
+    dicesReposository = context.watch<DicesRepository>();
 
     return Scaffold(
       appBar: AppBar(
@@ -93,32 +113,35 @@ class _MainMenuState extends State<MainMenu> {
           ),
         ),
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          wrapSheets(),
-          wrapDices(),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: OutlinedButton(
-                onPressed: () => context.read<AuthService>().logout(),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        'Sair do app',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  ],
-                )),
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () => charactersRepository.refresh(),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [
+            wrapSheets(),
+            wrapDices(),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: OutlinedButton(
+                  onPressed: () => context.read<AuthService>().logout(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Sair do app',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+          ],
+        ),
       ),
     );
   }

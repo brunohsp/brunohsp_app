@@ -1,45 +1,25 @@
+import 'package:brunohsp_app/models/character.dart';
 import 'package:brunohsp_app/widgets/cards/default_card.dart';
 import 'package:brunohsp_app/widgets/utils/tag.dart';
 import 'package:flutter/material.dart';
 
 class MiniSheetCard extends DefaultCard {
-  final String name;
-  final String playerClass;
-  final int level;
-  final int hp;
-  final int armor;
+  final Character character;
 
-  MiniSheetCard(
-      {required columns,
-      required this.name,
-      required this.playerClass,
-      required this.level,
-      required this.hp,
-      required this.armor,
-      Key? key})
+  MiniSheetCard({required columns, required this.character, Key? key})
       : super(
             key: key,
             columns: columns,
             child: _MiniSheetCardChildren(
-                name: name,
-                playerClass: playerClass,
-                level: level,
-                hp: hp,
-                armor: armor));
+              character: character,
+            ));
 }
 
 class _MiniSheetCardChildren extends StatelessWidget {
-  final String name;
-  final String playerClass;
-  final int level;
-  final int hp;
-  final int armor;
+  final Character character;
+
   const _MiniSheetCardChildren(
-      {required this.name,
-      required this.playerClass,
-      required this.level,
-      required this.hp,
-      required this.armor,
+      {required this.character,
       Key? key})
       : super(key: key);
 
@@ -61,14 +41,14 @@ class _MiniSheetCardChildren extends StatelessWidget {
                 Expanded(
                   flex: 0,
                   child: Text(
-                    name,
+                    character.name,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Text(
-                  playerClass,
+                  character.dndClass.name,
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -86,19 +66,19 @@ class _MiniSheetCardChildren extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('nvl. $level'),
+          Text('nvl. ${character.level}'),
           Tag(
               badge: const Icon(
                 Icons.favorite_rounded,
                 size: 16,
               ),
-              label: hp.toString()),
+              label: character.hp.toString()),
           Tag(
               badge: const Icon(
                 Icons.shield_rounded,
                 size: 16,
               ),
-              label: armor.toString()),
+              label: character.armor.toString()),
         ],
       ),
     );

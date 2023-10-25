@@ -46,6 +46,10 @@ class NotesRepository extends ChangeNotifier {
     }
   }
 
+  refresh() async {
+    await _readNotes();
+  }
+
   UnmodifiableListView<Note> get list => UnmodifiableListView(_list);
 
   saveOneNote(Note newNote) async {

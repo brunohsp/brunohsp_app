@@ -2,20 +2,20 @@
 
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/models/resistance.dart';
-import 'package:brunohsp_app/pages/character/new_skill_register.dart';
+import 'package:brunohsp_app/pages/character/skill_form.dart';
 import 'package:brunohsp_app/repositories/character_form_repository.dart';
 import 'package:brunohsp_app/widgets/utils/skill_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NewResistanceRegister extends StatefulWidget {
-  const NewResistanceRegister({Key? key}) : super(key: key);
+class ResistanceForm extends StatefulWidget {
+  const ResistanceForm({Key? key}) : super(key: key);
 
   @override
-  State<NewResistanceRegister> createState() => _NewResistanceRegisterState();
+  State<ResistanceForm> createState() => _ResistanceFormState();
 }
 
-class _NewResistanceRegisterState extends State<NewResistanceRegister> {
+class _ResistanceFormState extends State<ResistanceForm> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController strengthController = TextEditingController();
@@ -50,7 +50,7 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
                   builder: (context) => ChangeNotifierProvider(
                     create: (context) => repository,
                     lazy: false,
-                    child: const NewSkillRegister(),
+                    child: const SkillForm(),
                   ),
                 ),
               );
@@ -144,18 +144,25 @@ class _NewResistanceRegisterState extends State<NewResistanceRegister> {
   Widget build(BuildContext context) {
     repository = Provider.of<CharacterFormRepository>(context);
 
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 1,
-          centerTitle: true,
-          title: const Text(
-            'Cadastro de Personagem',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 1,
+            centerTitle: true,
+            title: const Text(
+              'Cadastro de Personagem',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }

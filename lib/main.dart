@@ -1,3 +1,6 @@
+import 'package:brunohsp_app/database/hive_config.dart';
+import 'package:brunohsp_app/repositories/characters_repository.dart';
+import 'package:brunohsp_app/repositories/dices_repository.dart';
 import 'package:brunohsp_app/repositories/notes_repository.dart';
 import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/auth_check.dart';
@@ -10,6 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await HiveConfig.start();
 
   runApp(const MyApp());
 }
@@ -25,6 +29,14 @@ class MyApp extends StatelessWidget {
           create: (context) => NotesRepository(
             auth: context.read<AuthService>(),
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CharacterRepository(
+            auth: context.read<AuthService>(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => DicesRepository(),
         ),
       ],
       child: MaterialApp(

@@ -3,6 +3,7 @@ import 'package:brunohsp_app/models/resistance.dart';
 import 'package:brunohsp_app/models/skill.dart';
 
 class Character {
+  late String id;
   late String name;
   late int level;
   late int hp;
@@ -21,6 +22,7 @@ class Character {
   });
 
   Character.withResistancesAndSkills({
+    required this.id,
     required this.name,
     required this.dndClass,
     required this.level,

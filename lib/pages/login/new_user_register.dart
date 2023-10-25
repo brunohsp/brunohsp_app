@@ -121,25 +121,34 @@ class _NewUserRegisterState extends State<NewUserRegister> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 15,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true,
-          title: const Text(
-            'Cadastro',
-            style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(200),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 15,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            centerTitle: true,
+            title: const Text(
+              'Cadastro',
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(200),
+              ),
             ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }

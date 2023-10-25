@@ -129,9 +129,12 @@ class _GameplayMenuState extends State<GameplayMenu> {
           ),
         ),
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [wrapDices(), wrapDiaries()],
+      body: RefreshIndicator(
+        onRefresh: () => notesRepository.refresh(),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [wrapDices(), wrapDiaries()],
+        ),
       ),
     );
   }

@@ -5,7 +5,6 @@ import 'package:brunohsp_app/models/dnd_class.dart';
 import 'package:brunohsp_app/services/class_service.dart';
 import 'package:provider/provider.dart';
 
-// TODO: ADD VALIDATION
 class ClassesDropdown extends StatefulWidget {
   final int columns;
   final TextEditingController controller;
@@ -19,7 +18,7 @@ class ClassesDropdown extends StatefulWidget {
 
 class _ClassesDropdownState extends State<ClassesDropdown> {
   final DndClassService service = DndClassService();
-  late CharacterFormRepository newCharacter = CharacterFormRepository();
+  late CharacterFormRepository newCharacter;
   late List<DndClass> list = [];
   List<DropdownMenuEntry<String>> dropdownList = [
     const DropdownMenuEntry(value: "placeholder", label: "Classe")
@@ -76,6 +75,7 @@ class _ClassesDropdownState extends State<ClassesDropdown> {
               selectClass(value);
             });
           },
+          menuHeight: 280,
           controller: widget.controller,
           dropdownMenuEntries: dropdownList,
           label: const Text("Classe"),

@@ -32,9 +32,9 @@ class _NoteFormState extends State<NoteForm> {
     super.initState();
     setFormType();
 
-    if(widget.selectedNote != null){
+    if (widget.selectedNote != null) {
       titleController.text = widget.selectedNote!.sectionName;
-        noteController.text = widget.selectedNote!.content;
+      noteController.text = widget.selectedNote!.content;
     }
   }
 
@@ -223,18 +223,25 @@ class _NoteFormState extends State<NoteForm> {
   @override
   Widget build(BuildContext context) {
     repository = context.read<NotesRepository>();
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 10,
-          centerTitle: true,
-          title: Text(
-            pageTitle,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 10,
+            centerTitle: true,
+            title: Text(
+              pageTitle,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }
