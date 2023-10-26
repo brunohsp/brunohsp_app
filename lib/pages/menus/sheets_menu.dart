@@ -1,9 +1,7 @@
-import 'package:brunohsp_app/models/character.dart';
-import 'package:brunohsp_app/models/dnd_class.dart';
-import 'package:brunohsp_app/models/resistance.dart';
-import 'package:brunohsp_app/models/skill.dart';
-import 'package:brunohsp_app/pages/character/new_character_register.dart';
+import 'package:brunohsp_app/pages/character/character_form.dart';
 import 'package:brunohsp_app/repositories/character_form_repository.dart';
+import 'package:brunohsp_app/repositories/characters_repository.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/cards/new_item_card.dart';
 import 'package:brunohsp_app/widgets/cards/sheet_card.dart';
 import 'package:brunohsp_app/widgets/utils/section.dart';
@@ -18,69 +16,68 @@ class SheetsMenu extends StatefulWidget {
 }
 
 class _SheetsMenuState extends State<SheetsMenu> {
+  late CharacterRepository charactersRepository;
+
   wrapSheets() {
-    // TODO: INSERT DATABASE
     return Section(
       title: 'Fichas',
-      child: SizedBox(
-        height: 574,
-        child: ListView(
-          clipBehavior: Clip.none,
-          scrollDirection: Axis.horizontal,
-          children: [
-            SheetCard(
-              context: context,
-              columns: 3,
-              character: Character.withResistancesAndSkills(
-                name: 'name',
-                dndClass: DndClass.withInfos(index: "warrior", name: "warrior"),
-                level: 10,
-                hp: 10,
-                armor: 10,
-                proficiency: 2,
-                resistances: Resistance(
-                    strength: 10,
-                    inteligency: 20,
-                    dexterity: 13,
-                    wisdom: 7,
-                    constitution: 4,
-                    charism: 18),
-                skills: Skill(
-                  proficiencies: [],
-                  resistance: Resistance(
-                      strength: 10,
-                      inteligency: 20,
-                      dexterity: 13,
-                      wisdom: 7,
-                      constitution: 4,
-                      charism: 18),
-                ),
-              ),
+      iconButton: IconButton(
+        icon: const Icon(Icons.add_circle_outline_rounded),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider(
+                  create: (context) => CharacterFormRepository(
+                      auth: context.read<AuthService>()),
+                  child: const CharacterForm()),
             ),
-
-            NewItemCard(
-              columns: 3,
-              itemName: 'Personagem',
-              onTap: () {
-                return Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                        create: (context) => CharacterFormRepository(),
-                        child: const NewCharacterRegister()),
-                  ),
-                );
-              },
-            ),
-            // NewItemCard(columns: 2, height: 300.0, itemName: 'Notas')
-          ],
-        ),
+          );
+        },
       ),
+      child: SizedBox(
+          height: 574,
+          child: Consumer<CharacterRepository>(
+              builder: (context, characters, child) {
+            return characters.list.isEmpty
+                ? NewItemCard(
+                    columns: 3,
+                    itemName: 'Personagem',
+                    onTap: () {
+                      return Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangeNotifierProvider(
+                              create: (context) => CharacterFormRepository(
+                                  auth: context.read<AuthService>()),
+                              child: const CharacterForm()),
+                        ),
+                      );
+                    },
+                  )
+                : SizedBox(
+                    height: 300,
+                    child: ListView.builder(
+                      clipBehavior: Clip.none,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: characters.list.length,
+                      itemBuilder: (_, index) {
+                        return SheetCard(
+                          context: context,
+                          columns: 3,
+                          character: characters.list[index],
+                        );
+                      },
+                    ),
+                  );
+          })),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    charactersRepository = context.read<CharacterRepository>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -91,9 +88,12 @@ class _SheetsMenuState extends State<SheetsMenu> {
           ),
         ),
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [wrapSheets()],
+      body: RefreshIndicator(
+        onRefresh: () => charactersRepository.refresh(),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [wrapSheets()],
+        ),
       ),
     );
   }

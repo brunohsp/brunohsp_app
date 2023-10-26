@@ -1,20 +1,24 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
-import 'package:brunohsp_app/pages/character/new_resistance_register.dart';
+import 'package:brunohsp_app/models/character.dart';
+import 'package:brunohsp_app/pages/character/resistance_form.dart';
 import 'package:brunohsp_app/repositories/character_form_repository.dart';
 import 'package:brunohsp_app/widgets/utils/classes_dropdown.dart';
 import 'package:brunohsp_app/widgets/utils/number_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NewCharacterRegister extends StatefulWidget {
-  const NewCharacterRegister({Key? key}) : super(key: key);
+class CharacterForm extends StatefulWidget {
+  final bool isCreate;
+  final Character? character;
+  const CharacterForm({this.isCreate = true, this.character, Key? key})
+      : super(key: key);
 
   @override
-  State<NewCharacterRegister> createState() => _NewCharacterRegisterState();
+  State<CharacterForm> createState() => CharacterFormState();
 }
 
-class _NewCharacterRegisterState extends State<NewCharacterRegister> {
+class CharacterFormState extends State<CharacterForm> {
   final _formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
@@ -24,7 +28,7 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
   final armorController = TextEditingController();
   final proficiencyController = TextEditingController();
 
-  late CharacterFormRepository repository = CharacterFormRepository();
+  late CharacterFormRepository repository;
 
   wrapButtons() {
     return Padding(
@@ -33,7 +37,8 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
         width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
         child: OutlinedButton(
           onPressed: () {
-            if (_formKey.currentState!.validate() && classController.text != "") {
+            if (_formKey.currentState!.validate() &&
+                classController.text != "") {
               repository.savingBySteps(1, {
                 "name": nameController,
                 "hp": hpController,
@@ -44,7 +49,7 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
                 MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
                         create: (context) => repository,
-                        child: const NewResistanceRegister())),
+                        child: const ResistanceForm())),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -168,22 +173,41 @@ class _NewCharacterRegisterState extends State<NewCharacterRegister> {
     );
   }
 
+  _initializateForm() {
+    repository.saveClass(widget.character!.dndClass);
+
+    nameController.text = widget.character!.name;
+    classController.text = widget.character!.dndClass.name;
+    levelController.text = widget.character!.level.toString();
+    hpController.text = widget.character!.hp.toString();
+    armorController.text = widget.character!.armor.toString();
+    proficiencyController.text = widget.character!.proficiency.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     repository = context.watch<CharacterFormRepository>();
+    if (widget.character != null) _initializateForm();
 
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 1,
-          centerTitle: true,
-          title: const Text(
-            'Cadastro de Personagem',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 1,
+            centerTitle: true,
+            title: const Text(
+              'Cadastro de Personagem',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }

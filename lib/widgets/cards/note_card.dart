@@ -1,44 +1,36 @@
-import 'package:brunohsp_app/pages/note/note_update.dart';
+import 'package:brunohsp_app/models/note.dart';
+import 'package:brunohsp_app/pages/note/note_form.dart';
 import 'package:brunohsp_app/widgets/cards/default_card.dart';
 import 'package:flutter/material.dart';
 
-class DiaryCard extends DefaultCard {
-  // TODO: RECEIVE A NOTE/DIARY MODEL
-  final String sectionName;
-  final String content;
-  final DateTime date;
+class NoteCard extends DefaultCard {
+  final Note note;
 
-  DiaryCard(
-      {required columns,
-      required this.sectionName,
-      required this.content,
-      required this.date,
-      required context,
-      Key? key})
+  NoteCard({required columns, required this.note, required context, Key? key})
       : super(
-            key: key,
-            columns: columns,
-            onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NoteUpdate(title: sectionName, date: date, note: content),
-                  ),
-                );
-              },
-
-            child: _DiaryCardChildren(
-                sectionName: sectionName, date: date, content: content));
+          key: key,
+          columns: columns,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NoteForm(
+                  isCreate: false,
+                  selectedNote: note,
+                ),
+              ),
+            );
+          },
+          child: _NoteCardChildren(
+            note: note,
+          ),
+        );
 }
 
-class _DiaryCardChildren extends StatelessWidget {
-  final String sectionName;
-  final String content;
-  final DateTime date;
-  const _DiaryCardChildren(
-      {required this.sectionName,
-      required this.content,
-      required this.date,
+class _NoteCardChildren extends StatelessWidget {
+  final Note note;
+  const _NoteCardChildren(
+      {required this.note,
       Key? key})
       : super(key: key);
 
@@ -61,13 +53,13 @@ class _DiaryCardChildren extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            sectionName,
+                            note.sectionName,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Text('${date.day}/${date.month}/${date.year}',
+                        Text('${note.date.day}/${note.date.month}/${note.date.year}',
                             style: const TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.bold))
                       ]),
@@ -75,7 +67,7 @@ class _DiaryCardChildren extends StatelessWidget {
                 Expanded(
                     flex: 1,
                     child: Text(
-                      content,
+                      note.content,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12),
                       maxLines: 12,

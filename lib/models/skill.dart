@@ -43,7 +43,8 @@ class Skill {
   late int survival;
   late List<Skills> proficiencies;
 
-  Skill({required this.resistance, required this.proficiencies, int bonus = 0}) {
+  Skill(
+      {required this.resistance, required this.proficiencies, int bonus = 0}) {
     athletics = calculateSkill(resistance.strength);
 
     acrobatics = calculateSkill(resistance.dexterity);
@@ -69,27 +70,6 @@ class Skill {
 
     validateProficiencies(bonus);
   }
-
-  Skill.udpateValues({
-    required this.acrobatics,
-    required this.arcana,
-    required this.athletics,
-    required this.performance,
-    required this.deception,
-    required this.stealth,
-    required this.history,
-    required this.intimidation,
-    required this.insight,
-    required this.investigation,
-    required this.animalHandling,
-    required this.medicine,
-    required this.nature,
-    required this.perception,
-    required this.persuation,
-    required this.sleightOfHand,
-    required this.religion,
-    required this.survival,
-  });
 
   void validateProficiencies(int bonus) {
     athletics += proficiencies.contains(Skills.athletics) ? bonus : 0;
@@ -123,6 +103,62 @@ class Skill {
       default:
         return -5;
     }
+  }
+
+  static skillsFromFirestore(String data) {
+    data = data.replaceAll('Skills.', '');
+    data = data.replaceAll('[', '');
+    data = data.replaceAll(']', '');
+    List<String> resistances = data.split(',');
+
+    List<Skills> translated = [];
+
+    for (String element in resistances) {
+      translated.add(Skill.translateSkillFromFirestore(element.trim()) as Skills);
+    }
+    return translated;
+  }
+
+  static Skills? translateSkillFromFirestore(String data) {
+    switch (data) {
+      case 'acrobatics':
+        return Skills.acrobatics;
+      case 'animalHandling':
+        return Skills.animalHandling;
+      case 'arcana':
+        return Skills.arcana;
+      case 'athletics':
+        return Skills.athletics;
+      case 'deception':
+        return Skills.deception;
+      case 'history':
+        return Skills.history;
+      case 'insight':
+        return Skills.insight;
+      case 'intimidation':
+        return Skills.intimidation;
+      case 'investigation':
+        return Skills.investigation;
+      case 'medicine':
+        return Skills.medicine;
+      case 'nature':
+        return Skills.nature;
+      case 'perception':
+        return Skills.perception;
+      case 'performance':
+        return Skills.performance;
+      case 'persuation':
+        return Skills.persuation;
+      case 'religion':
+        return Skills.religion;
+      case 'sleightOfHand-of-hand':
+        return Skills.sleightOfHand;
+      case 'stealth':
+        return Skills.stealth;
+      case 'survival':
+        return Skills.survival;
+    }
+    return null;
   }
 
   static Skills? translateSkill(Map<String, dynamic> proficiency) {

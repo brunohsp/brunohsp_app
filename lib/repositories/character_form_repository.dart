@@ -2,10 +2,19 @@ import 'package:brunohsp_app/models/character.dart';
 import 'package:brunohsp_app/models/dnd_class.dart';
 import 'package:brunohsp_app/models/resistance.dart';
 import 'package:brunohsp_app/models/skill.dart';
+import 'package:brunohsp_app/repositories/characters_repository.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class CharacterFormRepository extends ChangeNotifier {
   final Character _newCharacter = Character.emptyInstance();
+  late CharacterRepository characters;
+  late AuthService auth;
+
+  CharacterFormRepository({required this.auth}) {
+    characters = CharacterRepository(auth: auth);
+  }
+
   bool _isClassSelected = false;
 
   Character get newCharacter => _newCharacter;
@@ -36,7 +45,8 @@ class CharacterFormRepository extends ChangeNotifier {
     _newCharacter.armor = armor;
   }
 
-  savingBySteps(int step, Map<String, TextEditingController> controllers) {
+  savingBySteps(
+      int step, Map<String, TextEditingController> controllers) async {
     switch (step) {
       case 1:
         // level, class and proficiency being saved before button click
@@ -64,26 +74,39 @@ class CharacterFormRepository extends ChangeNotifier {
 
         break;
       case 3:
-        _newCharacter.skills = Skill.udpateValues(
-          acrobatics: int.parse(controllers["acrobatics"]!.text),
-          arcana: int.parse(controllers["arcana"]!.text),
-          athletics: int.parse(controllers["athletics"]!.text),
-          performance: int.parse(controllers["performance"]!.text),
-          deception: int.parse(controllers["deception"]!.text),
-          stealth: int.parse(controllers["stealth"]!.text),
-          history: int.parse(controllers["history"]!.text),
-          intimidation: int.parse(controllers["intimidation"]!.text),
-          insight: int.parse(controllers["insight"]!.text),
-          investigation: int.parse(controllers["investigation"]!.text),
-          animalHandling: int.parse(controllers["animalHandling"]!.text),
-          medicine: int.parse(controllers["medicine"]!.text),
-          nature: int.parse(controllers["nature"]!.text),
-          perception: int.parse(controllers["perception"]!.text),
-          persuation: int.parse(controllers["persuation"]!.text),
-          sleightOfHand: int.parse(controllers["sleightOfHand"]!.text),
-          religion: int.parse(controllers["religion"]!.text),
-          survival: int.parse(controllers["survival"]!.text),
-        );
+        _newCharacter.skills.acrobatics =
+            int.parse(controllers["acrobatics"]!.text);
+        _newCharacter.skills.arcana = int.parse(controllers["arcana"]!.text);
+        _newCharacter.skills.athletics =
+            int.parse(controllers["athletics"]!.text);
+        _newCharacter.skills.performance =
+            int.parse(controllers["performance"]!.text);
+        _newCharacter.skills.deception =
+            int.parse(controllers["deception"]!.text);
+        _newCharacter.skills.stealth = int.parse(controllers["stealth"]!.text);
+        _newCharacter.skills.history = int.parse(controllers["history"]!.text);
+        _newCharacter.skills.intimidation =
+            int.parse(controllers["intimidation"]!.text);
+        _newCharacter.skills.insight = int.parse(controllers["insight"]!.text);
+        _newCharacter.skills.investigation =
+            int.parse(controllers["investigation"]!.text);
+        _newCharacter.skills.animalHandling =
+            int.parse(controllers["animalHandling"]!.text);
+        _newCharacter.skills.medicine =
+            int.parse(controllers["medicine"]!.text);
+        _newCharacter.skills.nature = int.parse(controllers["nature"]!.text);
+        _newCharacter.skills.perception =
+            int.parse(controllers["perception"]!.text);
+        _newCharacter.skills.persuation =
+            int.parse(controllers["persuation"]!.text);
+        _newCharacter.skills.sleightOfHand =
+            int.parse(controllers["sleightOfHand"]!.text);
+        _newCharacter.skills.religion =
+            int.parse(controllers["religion"]!.text);
+        _newCharacter.skills.survival =
+            int.parse(controllers["survival"]!.text);
+
+        await characters.saveOneCharacter(_newCharacter);
 
         super.dispose();
         break;

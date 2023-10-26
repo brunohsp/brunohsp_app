@@ -23,11 +23,22 @@ class Resistance {
     required this.wisdom,
     required this.constitution,
     required this.charism,
-});
+  });
 
-  @override
-  String toString() {
-    return "$strength/n$inteligency/n$dexterity/n$wisdom/n$constitution/n$charism/n";
+  static List<Resistances> resistancesFromFirestore(String data) {
+    data = data.replaceAll('Resistances.', '');
+    data = data.replaceAll('[', '');
+    data = data.replaceAll(']', '');
+    List<String> resistances = data.split(',');
+
+    List<Resistances> translated = [];
+
+
+    for (String element in resistances) {
+      translated.add(Resistance.translateProficiency(element.trim().substring(0, 3))
+          as Resistances);
+    }
+    return translated;
   }
 
   static Resistances? translateProficiency(String proficiency) {

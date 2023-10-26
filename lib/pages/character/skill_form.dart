@@ -7,14 +7,14 @@ import 'package:brunohsp_app/widgets/utils/skill_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NewSkillRegister extends StatefulWidget {
-  const NewSkillRegister({Key? key}) : super(key: key);
+class SkillForm extends StatefulWidget {
+  const SkillForm({Key? key}) : super(key: key);
 
   @override
-  State<NewSkillRegister> createState() => _NewSkillRegisterState();
+  State<SkillForm> createState() => _SkillFormState();
 }
 
-class _NewSkillRegisterState extends State<NewSkillRegister> {
+class _SkillFormState extends State<SkillForm> {
   final _formKey = GlobalKey<FormState>();
 
   final acrobaticsController = TextEditingController();
@@ -36,7 +36,9 @@ class _NewSkillRegisterState extends State<NewSkillRegister> {
   final religionController = TextEditingController();
   final survivalController = TextEditingController();
 
-  CharacterFormRepository repository = CharacterFormRepository();
+  late CharacterFormRepository repository;
+
+  _goBack() => Navigator.popUntil(context, (route) => route.isFirst);
 
   wrapButtons() {
     return Padding(
@@ -44,9 +46,9 @@ class _NewSkillRegisterState extends State<NewSkillRegister> {
       child: SizedBox(
         width: Calculate.widthWithColumns(2, MediaQuery.of(context).size.width),
         child: OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              repository.savingBySteps(3, {
+              await repository.savingBySteps(3, {
                 "acrobatics": acrobaticsController,
                 "arcana": arcanaController,
                 "athletics": athleticsController,
@@ -66,7 +68,7 @@ class _NewSkillRegisterState extends State<NewSkillRegister> {
                 "religion": religionController,
                 "survival": survivalController,
               });
-              Navigator.popUntil(context, (route) => route.isFirst);
+              _goBack();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -257,18 +259,25 @@ class _NewSkillRegisterState extends State<NewSkillRegister> {
   @override
   Widget build(BuildContext context) {
     repository = Provider.of<CharacterFormRepository>(context);
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 1,
-          centerTitle: true,
-          title: const Text(
-            'Cadastro de Personagem',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 1,
+            centerTitle: true,
+            title: const Text(
+              'Cadastro de Personagem',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }

@@ -31,7 +31,11 @@ class NumberPicker extends StatefulWidget {
     this.enabled = true,
     super.key,
   }) {
-    controller.text = '$pickerValue';
+    if(controller.text.isEmpty) {
+      controller.text = '$pickerValue';
+    } else {
+      pickerValue = int.parse(controller.text);
+    }
   }
 
   NumberPicker.withValue({
@@ -43,7 +47,11 @@ class NumberPicker extends StatefulWidget {
     this.enabled = true,
     super.key,
   }) {
-    controller.text = '$pickerValue';
+    if(controller.text.isEmpty) {
+      controller.text = '$pickerValue';
+    } else {
+      pickerValue = int.parse(controller.text);
+    }
   }
 
   @override

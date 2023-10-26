@@ -2,9 +2,12 @@
 
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/widgets/avatars/dice_avatar.dart';
+import 'package:brunohsp_app/models/dice_roll.dart';
+import 'package:brunohsp_app/repositories/dices_repository.dart';
 import 'package:brunohsp_app/widgets/utils/number_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class DiceAvatar extends StatefulWidget {
   final String url;
@@ -18,13 +21,16 @@ class DiceAvatar extends StatefulWidget {
       Key? key})
       : super(key: key);
 
-  TextEditingController diceController = TextEditingController();
+  TextEditingController rollsController = TextEditingController();
+  TextEditingController incrementController = TextEditingController();
 
   @override
   State<DiceAvatar> createState() => _DiceAvatarState();
 }
 
 class _DiceAvatarState extends State<DiceAvatar> {
+  late DicesRepository repository;
+
   diceModal() {
     return showModalBottomSheet<void>(
       context: context,
@@ -32,7 +38,7 @@ class _DiceAvatarState extends State<DiceAvatar> {
         return Padding(
           padding: const EdgeInsets.all(16),
           child: SizedBox(
-            height: 200,
+            height:  300,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
@@ -47,8 +53,17 @@ class _DiceAvatarState extends State<DiceAvatar> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: NumberPicker(
-                    labelText: "lançamentos",
-                    controller: widget.diceController,
+                    labelText: "Incremento",
+                    controller: widget.incrementController,
+                    max: 100,
+                    min: 0,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: NumberPicker(
+                    labelText: "Lançamentos",
+                    controller: widget.rollsController,
                     max: 10,
                     min: 1,
                   ),
@@ -62,8 +77,20 @@ class _DiceAvatarState extends State<DiceAvatar> {
                       child: FilledButton(
                         onPressed: () {
                           // TODO: CHANGE RESULTS VISUALISATION
+
                           widget.results = DiceAvatarController.throwDices(
-                              widget.diceController.text, widget.sides);
+                              int.parse(widget.rollsController.text),
+                              widget.sides,
+                              int.parse(widget.incrementController.text));
+
+                          repository.saveRoll(DiceRoll(
+                            dice: 'D${widget.sides}',
+                            times: int.parse(widget.rollsController.text),
+                            addition:
+                                int.parse(widget.incrementController.text),
+                            results: widget.results,
+                          ));
+
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -107,6 +134,8 @@ class _DiceAvatarState extends State<DiceAvatar> {
 
   @override
   Widget build(BuildContext context) {
+    repository = context.read<DicesRepository>();
+
     return IconButton(
       onPressed: () {
         diceModal();

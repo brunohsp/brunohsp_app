@@ -1,8 +1,9 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
 import 'package:brunohsp_app/pages/login/new_user_register.dart';
-import 'package:brunohsp_app/widgets/pagesLayouts/default_menu_page.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -16,6 +17,29 @@ class _LoginState extends State<Login> {
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool loading = false;
+
+  loginAccount() async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<AuthService>()
+          .login(loginController.text, passwordController.text);
+    } on AuthException catch (err) {
+      setState(() => loading = false);
+
+      onError(err.message);
+    }
+  }
+
+  onError(String err) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(err),
+      ),
+    );
+  }
+
   wrapButtons() {
     return Column(
       children: [
@@ -25,17 +49,29 @@ class _LoginState extends State<Login> {
             width: Calculate.widthWithColumns(
                 3, MediaQuery.of(context).size.width),
             child: FilledButton.tonal(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DefaultMenuPage(),
-                    ),
-                  );
+                  await loginAccount();
                 }
               },
-              child: const Text('Entrar'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: (loading)
+                    ? [
+                        const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                        const Text('Entrar'),
+                      ]
+                    : [
+                        const Text('Entrar'),
+                      ],
+              ),
             ),
           ),
         ),
@@ -65,7 +101,8 @@ class _LoginState extends State<Login> {
           padding: const EdgeInsets.only(bottom: 16),
           child: TextFormField(
             validator: (input) {
-              if (TextFormFieldValidations.isEmpty(input)) return "Campo está vazio!";
+              if (TextFormFieldValidations.isEmpty(input))
+                return "Campo está vazio!";
 
               return TextFormFieldValidations.isValidEmail(input!)
                   ? null
@@ -128,25 +165,34 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 15,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true,
-          title: const Text(
-            'Login',
-            style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(200),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) currentFocus.unfocus();
+      },
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 15,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            centerTitle: true,
+            title: const Text(
+              'Login',
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(200),
+              ),
             ),
           ),
+          body: wrapBody(),
         ),
-        body: wrapBody(),
       ),
     );
   }

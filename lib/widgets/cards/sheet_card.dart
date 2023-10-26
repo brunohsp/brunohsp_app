@@ -1,11 +1,19 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/models/character.dart';
-import 'package:brunohsp_app/pages/character/character_update.dart';
+import 'package:brunohsp_app/models/resistance.dart';
+import 'package:brunohsp_app/models/skill.dart';
+import 'package:brunohsp_app/pages/character/character_form.dart';
+import 'package:brunohsp_app/repositories/character_form_repository.dart';
+import 'package:brunohsp_app/repositories/characters_repository.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/widgets/cards/default_card.dart';
 import 'package:brunohsp_app/widgets/utils/section.dart';
 import 'package:brunohsp_app/widgets/utils/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class SheetCard extends DefaultCard {
   final Character character;
@@ -114,6 +122,16 @@ class _SheetCardChildren extends StatelessWidget {
     );
   }
 
+  Color? getResistanceColor(element) =>
+      character.resistances.proficiencies.contains(element)
+          ? Colors.amber[700]
+          : Colors.black;
+
+  Color? getSkillColor(element) =>
+      character.skills.proficiencies.contains(element)
+          ? Colors.amber[700]
+          : Colors.black;
+
   resistanceBuilder() {
     return Column(
       children: [
@@ -138,6 +156,7 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/strength.svg',
                               width: 24,
                               height: 24,
+                              color: getResistanceColor(Resistances.strength),
                             ),
                             label: character.resistances.strength.toString()),
                         Tag(
@@ -145,6 +164,8 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/intelligency.svg',
                               width: 24,
                               height: 24,
+                              color:
+                                  getResistanceColor(Resistances.intelligency),
                             ),
                             label:
                                 character.resistances.inteligency.toString()),
@@ -158,6 +179,7 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/dexterity.svg',
                               width: 24,
                               height: 24,
+                              color: getResistanceColor(Resistances.dexterity),
                             ),
                             label: character.resistances.dexterity.toString()),
                         Tag(
@@ -165,6 +187,7 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/wisdom.svg',
                               width: 24,
                               height: 24,
+                              color: getResistanceColor(Resistances.wisdom),
                             ),
                             label: character.resistances.wisdom.toString()),
                       ],
@@ -177,6 +200,8 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/constitution.svg',
                               width: 24,
                               height: 24,
+                              color:
+                                  getResistanceColor(Resistances.constitution),
                             ),
                             label:
                                 character.resistances.constitution.toString()),
@@ -185,6 +210,7 @@ class _SheetCardChildren extends StatelessWidget {
                               'assets/icons/resistanceIcons/charism.svg',
                               width: 24,
                               height: 24,
+                              color: getResistanceColor(Resistances.charism),
                             ),
                             label: character.resistances.charism.toString()),
                       ],
@@ -221,31 +247,37 @@ class _SheetCardChildren extends StatelessWidget {
                       children: [
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.acrobatics),
                               'assets/icons/skillIcons/acrobatics.svg'),
                           label: character.skills.acrobatics.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.arcana),
                               'assets/icons/skillIcons/arcana.svg'),
                           label: character.skills.arcana.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.athletics),
                               'assets/icons/skillIcons/athletics.svg'),
                           label: character.skills.athletics.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.performance),
                               'assets/icons/skillIcons/performance.svg'),
                           label: character.skills.performance.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.deception),
                               'assets/icons/skillIcons/deception.svg'),
                           label: character.skills.deception.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.stealth),
                               'assets/icons/skillIcons/stealth.svg'),
                           label: character.skills.stealth.toString(),
                         ),
@@ -256,31 +288,37 @@ class _SheetCardChildren extends StatelessWidget {
                       children: [
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.history),
                               'assets/icons/skillIcons/history.svg'),
                           label: character.skills.history.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.intimidation),
                               'assets/icons/skillIcons/intimidation.svg'),
                           label: character.skills.intimidation.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.insight),
                               'assets/icons/skillIcons/insight.svg'),
                           label: character.skills.insight.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.investigation),
                               'assets/icons/skillIcons/investigation.svg'),
                           label: character.skills.investigation.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.animalHandling),
                               'assets/icons/skillIcons/animal_handling.svg'),
                           label: character.skills.animalHandling.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.medicine),
                               'assets/icons/skillIcons/medicine.svg'),
                           label: character.skills.medicine.toString(),
                         ),
@@ -291,31 +329,37 @@ class _SheetCardChildren extends StatelessWidget {
                       children: [
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.nature),
                               'assets/icons/skillIcons/nature.svg'),
                           label: character.skills.nature.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.perception),
                               'assets/icons/skillIcons/perception.svg'),
                           label: character.skills.perception.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.persuation),
                               'assets/icons/skillIcons/persuation.svg'),
                           label: character.skills.persuation.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.sleightOfHand),
                               'assets/icons/skillIcons/sleight_of_hand.svg'),
                           label: character.skills.sleightOfHand.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.religion),
                               'assets/icons/skillIcons/religion.svg'),
                           label: character.skills.religion.toString(),
                         ),
                         Tag(
                           badge: SvgPicture.asset(
+                              color: getSkillColor(Skills.survival),
                               'assets/icons/skillIcons/survival.svg'),
                           label: character.skills.survival.toString(),
                         ),
@@ -337,8 +381,14 @@ class _SheetCardChildren extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CharacterUpdate(
-                      character: character,
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (context) => CharacterFormRepository(
+                        auth: context.read<AuthService>(),
+                      ),
+                      child: CharacterForm(
+                        isCreate: false,
+                        character: character,
+                      ),
                     ),
                   ),
                 );
@@ -355,6 +405,11 @@ class _SheetCardChildren extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  onRemove() async {
+    CharacterRepository repository = context.read<CharacterRepository>();
+    await repository.remove(character);
   }
 
   confirmationModal() {
@@ -384,6 +439,7 @@ class _SheetCardChildren extends StatelessWidget {
                           2, MediaQuery.of(context).size.width),
                       child: FilledButton(
                         onPressed: () {
+                          onRemove();
                           Navigator.pop(context);
                         },
                         child: const Text('Sim'),
