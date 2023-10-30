@@ -48,7 +48,6 @@ class AuthService extends ChangeNotifier {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _getUser();
     } on FirebaseAuthException catch (err) {
-      print('###############################3 ${err.code}');
       if (err.code == 'user-not-found')
         throw AuthException('Login ou Senha inválidos!');
       else if (err.code == 'wrong-password')

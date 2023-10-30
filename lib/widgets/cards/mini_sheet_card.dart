@@ -24,14 +24,20 @@ class _MiniSheetCardChildren extends StatelessWidget {
       : super(key: key);
 
   headerBuilder() {
+    String? url = character.imageUrl;
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: CircleAvatar(radius: 24),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: CircleAvatar(
+            radius: 24,
+            backgroundImage: url != null
+                ? Image.network(url, fit: BoxFit.cover).image
+                : null,
+          ),
           ),
           Expanded(
             child: Column(

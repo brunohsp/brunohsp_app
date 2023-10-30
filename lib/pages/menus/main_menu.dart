@@ -64,7 +64,6 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   wrapDices() {
-    // TODO: INSERT DATABASE
     return Section(
       title: 'Dados Rolados Recentemente',
       child: SizedBox(
@@ -105,7 +104,10 @@ class _MainMenuState extends State<MainMenu> {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => charactersRepository.refresh(),
+        onRefresh: () async {
+          await charactersRepository.refresh();
+          await dicesReposository.refresh();
+        },
         child: ListView(
           scrollDirection: Axis.vertical,
           children: [

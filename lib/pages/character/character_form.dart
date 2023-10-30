@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/controllers/text_form_field_validations.dart';
 import 'package:brunohsp_app/models/character.dart';
@@ -6,6 +8,7 @@ import 'package:brunohsp_app/repositories/character_form_repository.dart';
 import 'package:brunohsp_app/widgets/utils/classes_dropdown.dart';
 import 'package:brunohsp_app/widgets/utils/number_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CharacterForm extends StatefulWidget {
@@ -28,7 +31,10 @@ class CharacterFormState extends State<CharacterForm> {
   final armorController = TextEditingController();
   final proficiencyController = TextEditingController();
 
+  XFile? image;
+
   late CharacterFormRepository repository;
+  bool wasInitialized = false;
 
   wrapButtons() {
     return Padding(
@@ -39,6 +45,9 @@ class CharacterFormState extends State<CharacterForm> {
           onPressed: () {
             if (_formKey.currentState!.validate() &&
                 classController.text != "") {
+              if (widget.character != null) {
+                repository.newCharacter.id = widget.character!.id;
+              }
               repository.savingBySteps(1, {
                 "name": nameController,
                 "hp": hpController,
@@ -65,18 +74,62 @@ class CharacterFormState extends State<CharacterForm> {
     );
   }
 
+  selectImage() async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      XFile? file = await picker.pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        repository.newCharacter.imageInfos["id"] =
+            'img-${DateTime.now().toString()}.jpeg';
+        repository.newCharacter.imageInfos["image"] = file;
+        setState(() => image = file);
+      }
+    } catch (e) {
+      SnackBar(
+        content: Text(
+          'Erro ao selecionar imagem: $e',
+          textAlign: TextAlign.center,
+        ),
+        duration: const Duration(milliseconds: 3000),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 8.0 // Inner padding for SnackBar content.
+            ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      );
+    }
+  }
+
+  imageAvatar() {
+    return widget.isCreate
+        ? [
+            CircleAvatar(
+              radius: 64,
+              backgroundImage: image != null
+                  ? Image.file(
+                      File(image!.path),
+                      fit: BoxFit.cover,
+                    ).image
+                  : null,
+            ),
+            IconButton(
+              onPressed: selectImage,
+              icon: const Icon(Icons.camera_alt_rounded),
+            ),
+          ]
+        : [Container()];
+  }
+
   wrapInputs() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const CircleAvatar(
-          radius: 64,
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.camera_alt_rounded),
-        ),
+        ...imageAvatar(),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: TextFormField(
@@ -174,6 +227,7 @@ class CharacterFormState extends State<CharacterForm> {
   }
 
   _initializateForm() {
+    wasInitialized = true;
     repository.saveClass(widget.character!.dndClass);
 
     nameController.text = widget.character!.name;
@@ -187,7 +241,7 @@ class CharacterFormState extends State<CharacterForm> {
   @override
   Widget build(BuildContext context) {
     repository = context.watch<CharacterFormRepository>();
-    if (widget.character != null) _initializateForm();
+    if (widget.character != null && !wasInitialized) _initializateForm();
 
     return GestureDetector(
       onTap: () {

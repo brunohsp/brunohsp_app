@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:brunohsp_app/database/db_firestore.dart';
 import 'package:brunohsp_app/models/character.dart';
@@ -8,11 +9,14 @@ import 'package:brunohsp_app/models/skill.dart';
 import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:brunohsp_app/services/class_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class CharacterRepository extends ChangeNotifier {
   final List<Character> _list = [];
   late FirebaseFirestore db;
+  final FirebaseStorage storage = FirebaseStorage.instance;
+
   late AuthService auth;
 
   CharacterRepository({required this.auth}) {
@@ -26,6 +30,11 @@ class CharacterRepository extends ChangeNotifier {
 
   _startFirestore() {
     db = DBFirestore.get();
+  }
+
+  _getImage(String? imageId) async {
+    if (imageId == null) return null;
+    return await storage.ref('images/$imageId').getDownloadURL();
   }
 
   _readCharacters() async {
@@ -51,6 +60,8 @@ class CharacterRepository extends ChangeNotifier {
             proficiency: doc.get('proficiency'),
             resistances: resistance,
             skills: skill,
+            imageUrl: await _getImage(doc.get('image_id')),
+            imageId: doc.get('image_id')
           ));
         }
         notifyListeners();
@@ -61,6 +72,7 @@ class CharacterRepository extends ChangeNotifier {
   }
 
   refresh() async {
+    _list.clear();
     await _readCharacters();
   }
 
@@ -113,12 +125,32 @@ class CharacterRepository extends ChangeNotifier {
 
   UnmodifiableListView<Character> get list => UnmodifiableListView(_list);
 
-  saveOneCharacter(Character newCharacter) async {
-    UniqueKey key = UniqueKey();
-    newCharacter.id = key.toString();
+  removeImage(String imageUrl) async {
+    await storage.refFromURL(imageUrl).delete();
+  }
 
-    _list.add(newCharacter);
+  saveImage(Map<String, dynamic> imageInfos) async {
+    File file = File(imageInfos["image"].path);
+    try {
+      String ref = 'images/${imageInfos["id"]}';
+      final storageRef = FirebaseStorage.instance.ref();
+      storageRef.child(ref).putFile(
+            file,
+            SettableMetadata(
+              cacheControl: "public, max-age=300",
+              contentType: "image/jpeg",
+              customMetadata: {
+                "user": auth.user!.uid,
+              },
+            ),
+          );
+      notifyListeners();
+    } on FirebaseException catch (e) {
+      throw Exception('Erro no upload: ${e.code}');
+    }
+  }
 
+  _saveCharacter(newCharacter) async {
     await db
         .collection('users/${auth.user!.uid}/characters')
         .doc(newCharacter.id)
@@ -130,8 +162,11 @@ class CharacterRepository extends ChangeNotifier {
       'hp': newCharacter.hp,
       'armor': newCharacter.armor,
       'proficiency': newCharacter.proficiency,
+      'image_id': newCharacter.imageInfos["id"],
     });
+  }
 
+  _saveResistances(newCharacter) async {
     await db
         .collection('users/${auth.user!.uid}/resistances')
         .doc(newCharacter.id)
@@ -144,18 +179,35 @@ class CharacterRepository extends ChangeNotifier {
       'charism': newCharacter.resistances.charism,
       'proficiencies': newCharacter.resistances.proficiencies.toString(),
     });
+  }
 
+  _saveSkills(newCharacter) async {
     await db
         .collection('users/${auth.user!.uid}/skills')
         .doc(newCharacter.id)
         .set({
       'proficiencies': newCharacter.skills.proficiencies.toString(),
     });
+  }
+
+  saveOneCharacter(Character newCharacter) async {
+    UniqueKey key = UniqueKey();
+    newCharacter.id =
+        newCharacter.id == 'null' ? key.toString() : newCharacter.id;
+
+    _list.add(newCharacter);
+
+    await _saveCharacter(newCharacter);
+    await _saveResistances(newCharacter);
+    await _saveSkills(newCharacter);
 
     notifyListeners();
   }
 
   remove(Character character) async {
+    if (character.imageUrl != null)
+      await removeImage(character.imageUrl as String);
+
     await db
         .collection('users/${auth.user!.uid}/characters')
         .doc(character.id)

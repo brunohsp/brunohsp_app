@@ -106,10 +106,14 @@ class CharacterFormRepository extends ChangeNotifier {
         _newCharacter.skills.survival =
             int.parse(controllers["survival"]!.text);
 
+        if (newCharacter.imageInfos["id"] != null) await characters.saveImage(newCharacter.imageInfos);
+
         await characters.saveOneCharacter(_newCharacter);
 
         super.dispose();
         break;
     }
+
+
   }
 }

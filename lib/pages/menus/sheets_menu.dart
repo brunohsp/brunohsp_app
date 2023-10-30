@@ -80,7 +80,9 @@ class _SheetsMenuState extends State<SheetsMenu> {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => charactersRepository.refresh(),
+        onRefresh: () async {
+          await charactersRepository.refresh();
+        },
         child: ListView(
           scrollDirection: Axis.vertical,
           children: [wrapSheets()],
