@@ -42,9 +42,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'DND',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
+          brightness: Brightness.light,
+          colorSchemeSeed: const Color.fromARGB(255, 140, 20, 20),
           useMaterial3: true,
         ),
+        themeMode: ThemeMode.light,
         home: const AuthCheck(),
       ),
     );

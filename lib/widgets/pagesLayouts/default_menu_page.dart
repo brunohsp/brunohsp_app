@@ -3,8 +3,10 @@
 import 'package:brunohsp_app/pages/menus/gameplay_menu.dart';
 import 'package:brunohsp_app/pages/menus/main_menu.dart';
 import 'package:brunohsp_app/pages/menus/sheets_menu.dart';
+import 'package:brunohsp_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class DefaultMenuPage extends StatefulWidget {
   const DefaultMenuPage({Key? key}) : super(key: key);
@@ -23,6 +25,7 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const MainMenu();
+  String title = 'Menu Inicial';
 
   buildFAB() {
     return SizedBox(
@@ -32,6 +35,7 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
         child: FloatingActionButton(
           onPressed: () {
             setState(() {
+              title = 'Gameplay';
               currentScreen = const GameplayMenu();
               currentTab = 2;
             });
@@ -64,6 +68,7 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
             IconButton(
               onPressed: () {
                 setState(() {
+                  title = 'Menu Inicial';
                   currentScreen = const MainMenu();
                   currentTab = 1;
                 });
@@ -79,6 +84,7 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
             IconButton(
               onPressed: () {
                 setState(() {
+                  title = 'Personagens';
                   currentScreen = const SheetsMenu();
                   currentTab = 3;
                 });
@@ -94,6 +100,14 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
     );
   }
 
+  onSelected(BuildContext context, int item) {
+    switch (item) {
+      case 1:
+        context.read<AuthService>().logout();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,6 +118,23 @@ class _DefaultMenuPageState extends State<DefaultMenuPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: buildFAB(),
       bottomNavigationBar: buildBottomAppBar(),
+      appBar: AppBar(
+        actions: [
+          PopupMenuButton<int>(
+            onSelected: (item) => onSelected(context, item),
+            itemBuilder: ((context) => [
+                  const PopupMenuItem<int>(value: 1, child: Text('Sair')),
+                ]),
+          ),
+        ],
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }

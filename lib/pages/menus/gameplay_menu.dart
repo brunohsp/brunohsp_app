@@ -120,15 +120,6 @@ class _GameplayMenuState extends State<GameplayMenu> {
     notesRepository = context.watch<NotesRepository>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Gameplay',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       body: RefreshIndicator(
         onRefresh: () => notesRepository.refresh(),
         child: ListView(

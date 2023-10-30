@@ -79,15 +79,6 @@ class _SheetsMenuState extends State<SheetsMenu> {
     charactersRepository = context.read<CharacterRepository>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Personagens',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       body: RefreshIndicator(
         onRefresh: () => charactersRepository.refresh(),
         child: ListView(

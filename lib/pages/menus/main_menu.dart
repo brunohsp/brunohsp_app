@@ -104,15 +104,6 @@ class _MainMenuState extends State<MainMenu> {
     dicesReposository = context.watch<DicesRepository>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Menu Inicial',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       body: RefreshIndicator(
         onRefresh: () => charactersRepository.refresh(),
         child: ListView(
@@ -120,26 +111,6 @@ class _MainMenuState extends State<MainMenu> {
           children: [
             wrapSheets(),
             wrapDices(),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: OutlinedButton(
-                  onPressed: () => context.read<AuthService>().logout(),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          'Sair do app',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      )
-                    ],
-                  )),
-            ),
           ],
         ),
       ),
