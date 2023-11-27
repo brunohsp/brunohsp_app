@@ -25,11 +25,9 @@ class DndClass {
 
     savingThrows = Resistance.fromListMap(classMap["saving_throws"]);
 
-    for (Map<String, dynamic> proficiencie in proficiencies) {
-      maxResistances = proficiencie["choose"];
+    maxResistances = proficiencies[0]["choose"];
 
-      possibleSkills = Skill.fromListMap(proficiencie["from"]["options"]);
-    }
+    possibleSkills = Skill.fromListMap(proficiencies[0]["from"]["options"]);
 
     for (Map<String, dynamic> level in levelsMap) {
       profBonusesBylevel[level["level"]] = level["prof_bonus"];

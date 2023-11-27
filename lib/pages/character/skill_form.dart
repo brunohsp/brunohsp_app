@@ -3,6 +3,7 @@
 import 'package:brunohsp_app/controllers/calculate.dart';
 import 'package:brunohsp_app/models/skill.dart';
 import 'package:brunohsp_app/repositories/character_form_repository.dart';
+import 'package:brunohsp_app/widgets/pagesLayouts/default_menu_page.dart';
 import 'package:brunohsp_app/widgets/utils/skill_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,10 @@ class _SkillFormState extends State<SkillForm> {
 
   late CharacterFormRepository repository;
 
-  _goBack() => Navigator.popUntil(context, (route) => route.isFirst);
+  _goBack() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute<DefaultMenuPage>(
+        builder: ((BuildContext context) => const DefaultMenuPage())));
+  }
 
   wrapButtons() {
     return Padding(

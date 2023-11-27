@@ -26,6 +26,8 @@ class Resistance {
   });
 
   static List<Resistances> resistancesFromFirestore(String data) {
+    if(data == '[]') return List<Resistances>.empty();
+
     data = data.replaceAll('Resistances.', '');
     data = data.replaceAll('[', '');
     data = data.replaceAll(']', '');
@@ -38,6 +40,7 @@ class Resistance {
       translated.add(Resistance.translateProficiency(element.trim().substring(0, 3))
           as Resistances);
     }
+
     return translated;
   }
 

@@ -68,7 +68,7 @@ class Skill {
     perception = calculateSkill(resistance.wisdom);
     survival = calculateSkill(resistance.wisdom);
 
-    validateProficiencies(bonus);
+    if (proficiencies.isNotEmpty) validateProficiencies(bonus);
   }
 
   void validateProficiencies(int bonus) {
@@ -106,6 +106,8 @@ class Skill {
   }
 
   static skillsFromFirestore(String data) {
+    if (data == '[]') return List<Skills>.empty();
+
     data = data.replaceAll('Skills.', '');
     data = data.replaceAll('[', '');
     data = data.replaceAll(']', '');
@@ -114,8 +116,10 @@ class Skill {
     List<Skills> translated = [];
 
     for (String element in resistances) {
-      translated.add(Skill.translateSkillFromFirestore(element.trim()) as Skills);
+      translated
+          .add(Skill.translateSkillFromFirestore(element.trim()) as Skills);
     }
+
     return translated;
   }
 
@@ -151,7 +155,7 @@ class Skill {
         return Skills.persuation;
       case 'religion':
         return Skills.religion;
-      case 'sleightOfHand-of-hand':
+      case 'sleightOfHand':
         return Skills.sleightOfHand;
       case 'stealth':
         return Skills.stealth;

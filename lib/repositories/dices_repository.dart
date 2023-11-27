@@ -33,6 +33,10 @@ class DicesRepository extends ChangeNotifier{
     notifyListeners();
   }
 
+  refresh() async {
+    _readRolls();
+  }
+
   saveRoll(DiceRoll dr) {
     _list.add(dr);
     box.put('${dr.dice} + ${dr.addition}= ${dr.results}', dr);

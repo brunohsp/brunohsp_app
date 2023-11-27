@@ -3,6 +3,8 @@ import 'package:brunohsp_app/models/resistance.dart';
 import 'package:brunohsp_app/models/skill.dart';
 
 class Character {
+  final Map<String, dynamic> imageInfos = {'id': null,'image': null };
+  late String? imageUrl;
   late String id;
   late String name;
   late int level;
@@ -31,12 +33,18 @@ class Character {
     required this.proficiency,
     required this.resistances,
     required this.skills,
-  });
+    this.imageUrl,
+    imageId,
+  }){
+    imageInfos["id"] = imageId;
+  }
 
-  Character.emptyInstance(){
+  Character.emptyInstance() {
     proficiency = 0;
     level = 1;
     hp = 1;
     armor = 0;
+    imageUrl = null;
+    id = 'null';
   }
 }
